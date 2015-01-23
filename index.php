@@ -1,16 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>index</title>
-</head>
-<body>
 <?php
 /*
 变码科技自动回复测试
 */
-
-define("TOKEN", "weixin");
+header("content-type:text/html; charset:utf-8");
+define("TOKEN", "bianmakeji");
 $wechatObj = new wechatCallbackapiTest();
 if (isset($_GET['echostr'])) {
     $wechatObj->valid();
@@ -52,12 +45,14 @@ class wechatCallbackapiTest
     {
         $postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
 
-        if (!empty($postStr)){
+        if (!empty($postStr))
+        {
             $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
             $fromUsername = $postObj->FromUserName;
             $toUsername = $postObj->ToUserName;
             $keyword = trim($postObj->Content);
             $time = time();
+            $event = $postObj->Event;
             $textTpl = "<xml>
                         <ToUserName><![CDATA[%s]]></ToUserName>
                         <FromUserName><![CDATA[%s]]></FromUserName>
@@ -66,19 +61,40 @@ class wechatCallbackapiTest
                         <Content><![CDATA[%s]]></Content>
                         <FuncFlag>0</FuncFlag>
                         </xml>";
-            if($keyword == "当前时间"/* || $keyword == "？"*/)
+            if($keyword == "当前时间"||$keyword =="时间")
             {
                 $msgType = "text";
                 $contentStr = date("Y-m-d H:i:s",time());
                 $resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
                 echo $resultStr;
             }
-        }else{
-            echo "";
+            if($keyword =="你好"||$keyword =="尼嚎")
+            {
+                $msgType = "text";
+                $contentStr = "您好，欢迎来到变码科技！";
+                $resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
+                echo $resultStr;
+            }
+            if($keyword =="微店"||$keyword =="店铺")
+            {
+                $msgType ="text";
+                $contentStr = '<a href="http://wd.koudai.com/?userid=165605294">点击这里</a>';
+                $resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
+                echo $resultStr;
+            }
+            if ($event =="subscribe")
+            {
+            	$msgType ="text";
+            	$contentStr = "欢迎关注变码科技，最新优惠活动我们将及时推送给您！您可以尝试回复“时间”获取当前时间，也可以回复“你好”跟我们打个招呼~";
+            	$resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
+            	echo $resultStr;
+            }
+        }
+        else
+        {
+            echo "未接收到数据！";
             exit;
         }
     }
 }
 ?>
-</body>
-</html>
