@@ -2,7 +2,7 @@
 /*
 变码科技自动回复测试
 */
-header("content-type:text/html; charset:utf-8");
+header("Content-type:text/html; charset:utf-8");
 define("TOKEN", "bianmakeji");
 $wechatObj = new wechatCallbackapiTest();
 if (isset($_GET['echostr'])) {
